@@ -1,0 +1,19 @@
+[v2.0]
+
+Features:
+
+- Implement image upload and text extraction functionality in image_search() function (engine.py)
+- Implement a progress bar during the search process (gui.py)
+- Introduce search result tooltips (gui.py)
+
+Bugs:
+
+- Refactor the code to pass global variables as function arguments (gui.py)
+- Enhance error handling (gui.py)
+- Implement dynamic behavior for the search result components in secondary window (gui.py)
+
+[v3.0]
+
+- Advanced Search Options
+- Multi-Language Support
+- Webpage Rendering
