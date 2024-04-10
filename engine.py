@@ -1,10 +1,12 @@
 import concurrent.futures
 import random
 import heapq
-import subprocess
+import os
+import tkinter as tk
 
 import requests
 from bs4 import BeautifulSoup
+from tkinter import filedialog
 
 search_engines = {
     "google": {
@@ -66,9 +68,14 @@ def text_search(query):
 
 def fetch_results(query, engine):
     try:
+        # Connect to a proxy server
+        proxy_url = "socks5://148.72.212.183:60302"
+        proxies = {"http": proxy_url, "https": proxy_url}
+
         # Send GET request with the constructed URL and validate response
         search_response = requests.get(
             search_engines[engine]["url"] + query.replace(" ", "+"),
+            # proxies = proxies,
             timeout = 30
         )
         search_response.raise_for_status()
@@ -82,54 +89,36 @@ def fetch_results(query, engine):
             google_results = html_document.find_all("div", class_ = search_engines[engine]["result_class"])
 
             for result in google_results:
-                # Extract title and link URL from the search result
-                title = result.find(search_engines[engine]["title_class"]).text
-                link = result.find(search_engines[engine]["link_tag"])["href"]
-
-                # Add search result dictionary to the scraped_results list
-                scraped_results.append(
-                    {
-                        "title": title,
-                        "link": link,
-                        "engine": engine
-                    }
-                )
+                # Extract title and link URL from the search result and add to scraped_results list
+                scraped_results.append({
+                    "title": result.find(search_engines[engine]["title_class"]).text,
+                    "link": result.find(search_engines[engine]["link_tag"])["href"],
+                    "engine": engine
+                })
 
         elif engine == "bing":
             # Find all search results on Bing
             bing_results = html_document.find_all("li", class_ = search_engines[engine]["result_class"])
 
             for result in bing_results:
-                # Extract title and link URL from the search result
-                title = result.find(search_engines[engine]["link_tag"]).text
-                link = result.find(search_engines[engine]["link_tag"])["href"]
-
-                # Add search result dictionary to the scraped_results list
-                scraped_results.append(
-                    {
-                        "title": title,
-                        "link": link,
-                        "engine": engine
-                    }
-                )
+                # Extract title and link URL from the search result and add to scraped_results list
+                scraped_results.append({
+                    "title": result.find(search_engines[engine]["link_tag"]).text,
+                    "link": result.find(search_engines[engine]["link_tag"])["href"],
+                    "engine": engine
+                })
 
         elif engine == "yahoo":
             # Find all search results on Yahoo
             yahoo_results = html_document.find_all("div", class_ = search_engines[engine]["result_class"])
 
             for result in yahoo_results:
-                # Extract title and link URL from the search result
-                title = result.find(search_engines[engine]["link_tag"]).text
-                link = result.find(search_engines[engine]["link_tag"])["href"]
-
-                # Add search result dictionary to the scraped_results list
-                scraped_results.append(
-                    {
-                        "title": title,
-                        "link": link,
-                        "engine": engine
-                    }
-                )
+                # Extract title and link URL from the search result and add to scraped_results list
+                scraped_results.append({
+                    "title": result.find(search_engines[engine]["link_tag"]).text,
+                    "link": result.find(search_engines[engine]["link_tag"])["href"],
+                    "engine": engine
+                })
 
         return scraped_results
 
@@ -137,5 +126,12 @@ def fetch_results(query, engine):
         print(f"\nError occurred while retrieving the search results from {engine}:\n {exc}")
         return []
 
-def image_search():
-    subprocess.run(["explorer", "C:\\Users\\areeb\\Pictures"])
+def image_search(upload_image_entry):
+    # Open file explorer to allow the user to select an image
+    selected_file = filedialog.askopenfilename()
+
+    # If a file is selected, update the upload image field with the file name
+    if selected_file:
+        upload_image_entry.delete(0, tk.END)
+        file_name = os.path.basename(selected_file)
+        upload_image_entry.insert(0, file_name)
