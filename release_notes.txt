@@ -3,6 +3,7 @@
 Features:
 
 - Implement image upload and text extraction functionality in image_search() function (engine.py)
+- Integrate proxy functionality (proxy.py)
 - Implement a progress bar during the search process (gui.py)
 - Introduce search result tooltips (gui.py)
 
